@@ -18,8 +18,10 @@ export default async function LoginPage() {
   const usernameRequired = Boolean(process.env.APP_USERNAME?.trim());
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-4 py-12">
-      <div className="w-full max-w-sm">
+    <main className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-12">
+      <div className="pointer-events-none absolute left-1/2 top-0 size-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/[0.08] blur-3xl" />
+      <div className="pointer-events-none absolute bottom-[-12rem] right-[-8rem] size-[28rem] rounded-full bg-ink/[0.035] blur-3xl" />
+      <div className="relative w-full max-w-sm">
         <div className="flex justify-center">
           <Link href="/" className="flex items-baseline gap-1.5" aria-label="ineedit">
             <span className="text-[24px] font-semibold leading-none tracking-[-0.065em]">
@@ -31,7 +33,7 @@ export default async function LoginPage() {
 
         <div className="card mt-6 p-6 sm:p-7">
           <p className="label">Private wishlist</p>
-          <h1 className="mt-2 text-[26px] font-semibold tracking-[-0.04em]">
+          <h1 className="mt-2 font-display text-[2.35rem] font-normal leading-none tracking-[-0.01em]">
             Welcome back.
           </h1>
           <p className="mt-1.5 text-[13px] leading-6 text-muted">
@@ -45,7 +47,7 @@ export default async function LoginPage() {
         </div>
 
         <p className="mt-5 text-center text-[11px] text-muted">
-          One password. Your data never leaves your Raspberry Pi.
+          One login. Your data never leaves your Raspberry Pi.
         </p>
       </div>
     </main>

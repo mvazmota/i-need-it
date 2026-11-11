@@ -120,7 +120,7 @@ export function ItemSettings({
     <section className="card p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="text-sm font-semibold">Item settings</h2>
+          <h2 className="font-display text-[1.55rem] font-normal leading-none tracking-[-0.01em]">Item settings</h2>
           <p className="mt-1 text-xs text-muted">
             Targeting, schedule, and selectors.
           </p>

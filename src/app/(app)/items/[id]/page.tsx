@@ -113,7 +113,7 @@ export default async function ItemPage({ params }: PageProps) {
           {item.category ? <span className="chip">{item.category}</span> : null}
           <span className="text-[11px] text-muted">{item.site}</span>
         </div>
-        <h1 className="mt-3 max-w-4xl text-balance text-[clamp(1.8rem,3.2vw,2.6rem)] font-semibold leading-[1.04] tracking-[-0.045em]">
+        <h1 className="mt-3 max-w-4xl text-balance font-display text-[clamp(2rem,3.4vw,3rem)] font-normal leading-[1.02] tracking-[-0.012em]">
           {item.title}
         </h1>
         <a
@@ -207,14 +207,28 @@ export default async function ItemPage({ params }: PageProps) {
             </div>
           ) : null}
 
-          <section className="card p-5 sm:p-6">
+          <section className="card relative overflow-hidden p-5 sm:p-6">
+            <div className="pointer-events-none absolute -right-24 -top-28 size-64 rounded-full bg-accent/[0.055] blur-3xl" />
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
-                <p className="label">Current price</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="label">Current price</p>
+                  {stats.targetHit ? (
+                    <span className="chip chip-good">Target hit</span>
+                  ) : stats.isLowest ? (
+                    <span className="chip chip-ink">Lowest ever</span>
+                  ) : null}
+                </div>
                 <div className="mt-1.5 flex flex-wrap items-end gap-2.5">
-                  <span className="tnum text-[42px] font-semibold leading-none tracking-[-0.055em]">
-                    {current !== null ? formatMoney(current, item.currency) : "—"}
-                  </span>
+                  {current !== null ? (
+                    <span className="tnum text-[46px] font-semibold leading-none tracking-[-0.055em]">
+                      {formatMoney(current, item.currency)}
+                    </span>
+                  ) : (
+                    <span className="font-display text-[2.15rem] font-normal leading-none tracking-[-0.01em]">
+                      No price yet
+                    </span>
+                  )}
                   {stats.deltaCents !== null && stats.deltaCents !== 0 ? (
                     <span
                       className={cn(
@@ -254,12 +268,31 @@ export default async function ItemPage({ params }: PageProps) {
                     {relativeTime(item.lastCheckedAt)}
                   </span>
                 </div>
+                {current === null ? (
+                  <p className="mt-2 text-[11px] leading-5 text-muted">
+                    The page did not expose a readable price. Add one manually or
+                    set a CSS price selector below.
+                  </p>
+                ) : null}
               </div>
 
               <CheckButton itemId={item.id} variant="full" className="shrink-0" />
             </div>
 
-            {target !== null && current !== null && gap !== null ? (
+            {target === null ? (
+              <p className="mt-5 rounded-xl border border-dashed border-line-strong bg-paper/40 px-4 py-3 text-[11px] text-muted">
+                No target set. Add one in the settings below and the item will be
+                flagged when it gets there.
+              </p>
+            ) : current === null || gap === null ? (
+              <p className="mt-5 rounded-xl border border-dashed border-line-strong bg-paper/40 px-4 py-3 text-[11px] text-muted">
+                Target{" "}
+                <span className="tnum font-semibold text-ink">
+                  {formatMoney(target, item.currency)}
+                </span>{" "}
+                set. Add a price to see progress.
+              </p>
+            ) : (
               <div className="mt-5 rounded-xl border border-line bg-paper/60 px-4 py-3">
                 <div className="flex flex-wrap items-baseline justify-between gap-2 text-[11px]">
                   <span className="text-muted">
@@ -279,21 +312,27 @@ export default async function ItemPage({ params }: PageProps) {
                       : `${formatMoney(gap, item.currency)} to go`}
                   </span>
                 </div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-line">
-                  <div
-                    className={cn(
-                      "h-full rounded-full transition-all",
-                      gap <= 0 ? "bg-good" : "bg-accent",
-                    )}
-                    style={{ width: `${progress}%` }}
-                  />
+                <div className="relative mt-2 h-2">
+                  <div className="h-full overflow-hidden rounded-full bg-line">
+                    <div
+                      className={cn(
+                        "h-full rounded-full transition-all",
+                        gap <= 0 ? "bg-good" : "bg-accent",
+                      )}
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  {progress > 0 ? (
+                    <span
+                      className={cn(
+                        "absolute top-1/2 size-2.5 -translate-y-1/2 rounded-full border-2 border-surface",
+                        gap <= 0 ? "bg-good" : "bg-accent",
+                      )}
+                      style={{ left: `calc(${progress}% - 5px)` }}
+                    />
+                  ) : null}
                 </div>
               </div>
-            ) : (
-              <p className="mt-5 rounded-xl border border-dashed border-line-strong bg-paper/40 px-4 py-3 text-[11px] text-muted">
-                No target set. Add one in the settings below and the item will be
-                flagged when it gets there.
-              </p>
             )}
 
             <div className="mt-6 border-t border-line pt-5">
@@ -308,7 +347,7 @@ export default async function ItemPage({ params }: PageProps) {
 
           <section className="card p-5 sm:p-6">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="text-sm font-semibold">Price history</h2>
+              <h2 className="font-display text-[1.55rem] font-normal leading-none tracking-[-0.01em]">Price history</h2>
               <span className="text-[11px] text-muted">
                 {points.length} point{points.length === 1 ? "" : "s"}
                 {points.length > 30 ? " · latest 30 shown" : ""}
@@ -330,7 +369,7 @@ export default async function ItemPage({ params }: PageProps) {
                 {history.map(({ point, delta }) => (
                   <div
                     key={point.id}
-                    className="grid grid-cols-[1fr_auto] items-center gap-3 border-b border-line/70 py-2.5 text-[12px] last:border-0 sm:grid-cols-[1.3fr_0.7fr_0.8fr_auto]"
+                    className="grid grid-cols-[1fr_auto] items-center gap-3 border-b border-line/70 py-2.5 text-[12px] transition last:border-0 hover:bg-paper/45 sm:grid-cols-[1.3fr_0.7fr_0.8fr_auto]"
                   >
                     <div className="min-w-0">
                       <span className="block truncate text-ink-soft">

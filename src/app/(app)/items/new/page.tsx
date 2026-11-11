@@ -32,7 +32,7 @@ export default async function NewItemPage({
 
       <div className="mt-5">
         <p className="label">New item</p>
-        <h1 className="mt-2 text-[clamp(1.9rem,3.5vw,2.6rem)] font-semibold leading-[1.02] tracking-[-0.045em]">
+        <h1 className="mt-2 font-display text-[clamp(2.2rem,3.8vw,3rem)] font-normal leading-[0.98] tracking-[-0.012em]">
           Paste a link. We&apos;ll watch the price.
         </h1>
         <p className="mt-3 max-w-xl text-[14px] leading-6 text-ink-soft">

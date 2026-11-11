@@ -8,7 +8,9 @@ export function EmptyState({ filtered }: { filtered: boolean }) {
         <div className="flex size-12 items-center justify-center rounded-2xl bg-ink/5 text-muted">
           <SearchX className="size-5" strokeWidth={1.7} />
         </div>
-        <h2 className="mt-4 text-lg font-semibold">Nothing matches those filters.</h2>
+        <h2 className="mt-4 font-display text-[1.9rem] font-normal leading-tight tracking-[-0.01em]">
+          Nothing matches those filters.
+        </h2>
         <p className="mt-1 max-w-sm text-sm leading-6 text-muted">
           Try a shorter search, another category, or the full list.
         </p>
@@ -26,7 +28,7 @@ export function EmptyState({ filtered }: { filtered: boolean }) {
           <Link2 className="size-6 text-ink" strokeWidth={1.7} />
           <span className="absolute -right-1 -top-1 size-3 rounded-full border-2 border-surface bg-accent" />
         </div>
-        <h2 className="mt-5 text-2xl font-semibold tracking-[-0.03em]">
+        <h2 className="mt-5 font-display text-[2.1rem] font-normal leading-tight tracking-[-0.01em]">
           Start with something you want.
         </h2>
         <p className="mt-2 max-w-md text-sm leading-6 text-muted">

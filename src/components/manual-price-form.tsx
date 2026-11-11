@@ -57,7 +57,7 @@ export function ManualPriceForm({
 
   return (
     <section className="card p-5 sm:p-6">
-      <h2 className="text-sm font-semibold">Add a price manually</h2>
+      <h2 className="font-display text-[1.55rem] font-normal leading-none tracking-[-0.01em]">Add a price manually</h2>
       <p className="mt-1 text-xs leading-5 text-muted">
         For shops that block automated checks, or when you spot a better price
         yourself. It lands in the same history and updates the current price.

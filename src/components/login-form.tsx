@@ -63,7 +63,7 @@ export function LoginForm({ usernameRequired }: { usernameRequired: boolean }) {
               type="text"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              placeholder="martin"
+              placeholder="Your username"
               className="field h-12 pl-10"
               autoComplete="username"
               autoFocus
@@ -84,7 +84,7 @@ export function LoginForm({ usernameRequired }: { usernameRequired: boolean }) {
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            placeholder="••••••••••••"
+            placeholder="Your password"
             className="field h-12 pl-10"
             autoComplete="current-password"
             autoFocus={!usernameRequired}

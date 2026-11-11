@@ -7,7 +7,7 @@ export default function NotFound() {
       <div className="flex size-12 items-center justify-center rounded-2xl bg-ink/5 text-muted">
         <PackageSearch className="size-5" strokeWidth={1.6} />
       </div>
-      <h1 className="mt-4 text-2xl font-semibold tracking-[-0.03em]">
+      <h1 className="mt-4 font-display text-[2.2rem] font-normal tracking-[-0.01em]">
         That item is not here.
       </h1>
       <p className="mt-2 text-sm leading-6 text-muted">

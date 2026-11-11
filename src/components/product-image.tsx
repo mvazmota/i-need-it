@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { ImageOff } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export function ProductImage({
@@ -16,6 +15,7 @@ export function ProductImage({
   imageClassName?: string;
 }) {
   const [failed, setFailed] = useState(false);
+  const initial = alt.trim().charAt(0).toUpperCase() || "?";
 
   return (
     <div
@@ -36,9 +36,11 @@ export function ProductImage({
           className={cn("h-full w-full object-contain", imageClassName)}
         />
       ) : (
-        <div className="flex flex-col items-center gap-2 text-muted/45">
-          <ImageOff className="size-7" strokeWidth={1.4} />
-          <span className="text-[10px] font-medium uppercase tracking-[0.16em]">
+        <div className="flex flex-col items-center gap-2.5 text-muted/55">
+          <span className="flex size-12 items-center justify-center rounded-full border border-line/80 bg-surface/55 font-display text-[24px] leading-none text-ink/25 sm:size-14 sm:text-[28px]">
+            {initial}
+          </span>
+          <span className="text-[9px] font-medium uppercase tracking-[0.18em]">
             No image
           </span>
         </div>

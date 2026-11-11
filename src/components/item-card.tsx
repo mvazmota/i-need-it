@@ -36,7 +36,7 @@ export function ItemCard({ card }: { card: DashboardCard }) {
     ) : null;
 
   return (
-    <article className="card group flex h-full flex-col overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_24px_50px_-34px_rgb(26_23_18/0.55)]">
+    <article className="card group flex h-full flex-col overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[0_28px_60px_-38px_rgb(26_23_18/0.6)]">
       <div className="relative">
         <Link href={`/items/${item.id}`} aria-label={item.title}>
           <ProductImage
@@ -49,7 +49,7 @@ export function ItemCard({ card }: { card: DashboardCard }) {
         {badge ? <div className="absolute left-3 top-3">{badge}</div> : null}
         {item.lastError ? (
           <div
-            className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-full bg-bad-soft text-bad"
+            className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-full border border-bad/10 bg-bad-soft/95 text-bad backdrop-blur"
             title={item.lastError}
           >
             <TriangleAlert className="size-3.5" strokeWidth={2} />
@@ -59,9 +59,14 @@ export function ItemCard({ card }: { card: DashboardCard }) {
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex items-center justify-between gap-2">
-          <span className="truncate text-[11px] font-medium text-muted">
-            {item.site}
-          </span>
+          <div className="flex min-w-0 items-center gap-1.5">
+            <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-[8px] font-bold uppercase text-ink-soft">
+              {item.site.charAt(0)}
+            </span>
+            <span className="truncate text-[11px] font-medium text-muted">
+              {item.site}
+            </span>
+          </div>
           {item.category ? (
             <span className="shrink-0 text-[11px] text-muted/80">
               {item.category}
@@ -80,7 +85,13 @@ export function ItemCard({ card }: { card: DashboardCard }) {
           <div className="flex items-end justify-between gap-3">
             <div className="min-w-0">
               <div className="tnum text-[27px] font-semibold leading-none tracking-[-0.045em]">
-                {current !== null ? formatMoney(current, item.currency) : "—"}
+                {current !== null ? (
+                  formatMoney(current, item.currency)
+                ) : (
+                  <span className="text-[19px] font-medium tracking-[-0.02em] text-muted">
+                    No price
+                  </span>
+                )}
               </div>
               <div className="mt-1.5 flex h-4 items-center">
                 {current === null ? (
@@ -137,14 +148,25 @@ export function ItemCard({ card }: { card: DashboardCard }) {
                     : `${formatMoney(gap, item.currency)} to go`}
                 </span>
               </div>
-              <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-line">
-                <div
-                  className={cn(
-                    "h-full rounded-full transition-all",
-                    gap <= 0 ? "bg-good" : "bg-accent",
-                  )}
-                  style={{ width: `${progress}%` }}
-                />
+              <div className="relative mt-2 h-1.5">
+                <div className="h-full overflow-hidden rounded-full bg-line">
+                  <div
+                    className={cn(
+                      "h-full rounded-full transition-all",
+                      gap <= 0 ? "bg-good" : "bg-accent",
+                    )}
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                {progress > 0 ? (
+                  <span
+                    className={cn(
+                      "absolute top-1/2 size-2 -translate-y-1/2 rounded-full border border-surface",
+                      gap <= 0 ? "bg-good" : "bg-accent",
+                    )}
+                    style={{ left: `calc(${progress}% - 4px)` }}
+                  />
+                ) : null}
               </div>
             </div>
           ) : null}

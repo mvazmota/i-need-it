@@ -1,14 +1,12 @@
 import Link from "next/link";
-import { Flame, RefreshCw, Zap } from "lucide-react";
+import { Eye, Flame, RefreshCw, Wallet, Zap } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { ItemCard } from "@/components/item-card";
 import { StatusTabs } from "@/components/status-tabs";
 import { Toolbar } from "@/components/toolbar";
+import { cn } from "@/lib/cn";
 import { ITEM_STATUSES, type ItemStatus } from "@/lib/db/schema";
-import {
-  formatMoneyRounded,
-  relativeTime,
-} from "@/lib/format";
+import { formatMoneyRounded, relativeTime } from "@/lib/format";
 import { getDashboardData, type SortKey } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -29,24 +27,35 @@ function first(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function StatCard({
+function StatItem({
+  icon: Icon,
   label,
   value,
   hint,
   accent = false,
 }: {
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
   label: string;
   value: React.ReactNode;
   hint: string;
   accent?: boolean;
 }) {
   return (
-    <div className="card flex h-full flex-col justify-between p-3.5 sm:p-4">
-      <span className="label text-[9px] sm:text-[10px]">{label}</span>
+    <div className="flex min-w-0 flex-col px-3.5 py-4 sm:px-4">
+      <span className="flex items-center gap-1.5 text-muted">
+        <Icon
+          className={cn("size-3.5 shrink-0", accent && "text-accent")}
+          strokeWidth={1.8}
+        />
+        <span className="truncate text-[9px] font-semibold uppercase tracking-[0.13em]">
+          {label}
+        </span>
+      </span>
       <div
-        className={`tnum mt-3 text-[19px] font-semibold leading-none tracking-[-0.04em] sm:text-[22px] ${
-          accent ? "text-accent-dark" : ""
-        }`}
+        className={cn(
+          "tnum mt-3 text-[20px] font-semibold leading-none tracking-[-0.04em] sm:text-[23px]",
+          accent && "text-accent-dark",
+        )}
       >
         {value}
       </div>
@@ -109,12 +118,12 @@ export default async function HomePage({
     <div>
       <section className="mb-8">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
+          <div className="rise-in max-w-2xl">
             <p className="label flex items-center gap-2">
               <span className="size-1.5 rounded-full bg-accent" />
               Your wishlist
             </p>
-            <h1 className="mt-3 text-balance text-[clamp(2.25rem,4.6vw,3.7rem)] font-semibold leading-[0.98] tracking-[-0.055em]">
+            <h1 className="mt-3 text-balance font-display text-[clamp(2.7rem,5vw,4.35rem)] font-normal leading-[0.93] tracking-[-0.015em]">
               Buy it when it&apos;s worth it.
             </h1>
             <p className="mt-4 max-w-xl text-[15px] leading-7 text-ink-soft">
@@ -140,14 +149,24 @@ export default async function HomePage({
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-2.5 lg:w-[430px]">
-            <StatCard
+          <div
+            className="rise-in card grid w-full grid-cols-3 divide-x divide-line overflow-hidden lg:w-[450px]"
+            style={{ animationDelay: "70ms" }}
+          >
+            <StatItem
+              icon={Eye}
               label="Watching"
               value={data.counts.watching}
               hint={`${data.counts.all} item${data.counts.all === 1 ? "" : "s"} total`}
             />
-            <StatCard label="Current value" value={valueNode} hint="at today's prices" />
-            <StatCard
+            <StatItem
+              icon={Wallet}
+              label="Value"
+              value={valueNode}
+              hint="at today's prices"
+            />
+            <StatItem
+              icon={Flame}
               label="Deals"
               value={data.counts.deals}
               hint="target or new low"
@@ -195,8 +214,14 @@ export default async function HomePage({
 
           {data.cards.length > 0 ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-              {data.cards.map((card) => (
-                <ItemCard key={card.item.id} card={card} />
+              {data.cards.map((card, index) => (
+                <div
+                  key={card.item.id}
+                  className="rise-in h-full"
+                  style={{ animationDelay: `${Math.min(index, 8) * 35}ms` }}
+                >
+                  <ItemCard card={card} />
+                </div>
               ))}
             </div>
           ) : (
