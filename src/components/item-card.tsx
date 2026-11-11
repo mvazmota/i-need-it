@@ -36,7 +36,7 @@ export function ItemCard({ card }: { card: DashboardCard }) {
     ) : null;
 
   return (
-    <article className="card group flex h-full flex-col overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[0_28px_60px_-38px_rgb(26_23_18/0.6)]">
+    <article className="card group flex h-full flex-col overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[0_28px_60px_-38px_rgb(74_42_24/0.6)]">
       <div className="relative">
         <Link href={`/items/${item.id}`} aria-label={item.title}>
           <ProductImage

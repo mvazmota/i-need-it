@@ -41,7 +41,12 @@ function StatItem({
   accent?: boolean;
 }) {
   return (
-    <div className="flex min-w-0 flex-col px-3.5 py-4 sm:px-4">
+    <div
+      className={cn(
+        "flex min-w-0 flex-col px-3.5 py-4 sm:px-4",
+        accent && "bg-accent-soft/55",
+      )}
+    >
       <span className="flex items-center gap-1.5 text-muted">
         <Icon
           className={cn("size-3.5 shrink-0", accent && "text-accent")}
@@ -124,7 +129,8 @@ export default async function HomePage({
               Your wishlist
             </p>
             <h1 className="mt-3 text-balance font-display text-[clamp(2.7rem,5vw,4.35rem)] font-normal leading-[0.93] tracking-[-0.015em]">
-              Buy it when it&apos;s worth it.
+              Buy it when it&apos;s{" "}
+              <em className="italic text-accent">worth it.</em>
             </h1>
             <p className="mt-4 max-w-xl text-[15px] leading-7 text-ink-soft">
               Paste a product link from any shop. ineedit records the price and

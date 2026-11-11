@@ -94,14 +94,14 @@ export function PriceChart({
           >
             <defs>
               <linearGradient id="price-area" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#e8590c" stopOpacity={0.22} />
-                <stop offset="100%" stopColor="#e8590c" stopOpacity={0.01} />
+                <stop offset="0%" stopColor="#d95b1f" stopOpacity={0.22} />
+                <stop offset="100%" stopColor="#d95b1f" stopOpacity={0.01} />
               </linearGradient>
             </defs>
             <CartesianGrid
               strokeDasharray="3 4"
               vertical={false}
-              stroke="#e7e0d3"
+              stroke="#e7d3bb"
             />
             <XAxis
               dataKey="t"
@@ -118,7 +118,7 @@ export function PriceChart({
                 }
                 return formatShortDate(timestamp);
               }}
-              tick={{ fill: "#7c7467", fontSize: 10 }}
+              tick={{ fill: "#7f6049", fontSize: 10 }}
               axisLine={false}
               tickLine={false}
               minTickGap={36}
@@ -129,23 +129,23 @@ export function PriceChart({
               tickFormatter={(value) =>
                 formatCompactMoney(Number(value), currency)
               }
-              tick={{ fill: "#7c7467", fontSize: 10 }}
+              tick={{ fill: "#7f6049", fontSize: 10 }}
               axisLine={false}
               tickLine={false}
               width={58}
               tickMargin={4}
             />
             <Tooltip
-              cursor={{ stroke: "#d7cebc", strokeDasharray: "3 3" }}
+              cursor={{ stroke: "#d6b998", strokeDasharray: "3 3" }}
               contentStyle={{
                 borderRadius: 12,
-                border: "1px solid #e7e0d3",
-                backgroundColor: "#fffdf8",
+                border: "1px solid #e7d3bb",
+                backgroundColor: "#fffaf2",
                 boxShadow: "0 16px 40px -24px rgba(26,23,18,0.45)",
                 fontSize: 12,
                 padding: "8px 10px",
               }}
-              labelStyle={{ color: "#7c7467", fontSize: 10, marginBottom: 3 }}
+              labelStyle={{ color: "#7f6049", fontSize: 10, marginBottom: 3 }}
               formatter={(value) => [
                 formatMoney(Number(value), currency),
                 "Price",
@@ -155,7 +155,7 @@ export function PriceChart({
             {showTarget ? (
               <ReferenceLine
                 y={targetCents}
-                stroke="#1a1712"
+                stroke="#2a1a12"
                 strokeOpacity={0.45}
                 strokeDasharray="4 5"
               />
@@ -163,7 +163,7 @@ export function PriceChart({
             {showLowest ? (
               <ReferenceLine
                 y={lowestCents}
-                stroke="#177a44"
+                stroke="#3f7d49"
                 strokeOpacity={0.5}
                 strokeDasharray="4 5"
               />
@@ -171,14 +171,14 @@ export function PriceChart({
             <Area
               type="linear"
               dataKey="cents"
-              stroke="#e8590c"
+              stroke="#d95b1f"
               strokeWidth={2}
               fill="url(#price-area)"
               dot={false}
               activeDot={{
                 r: 4,
-                fill: "#e8590c",
-                stroke: "#fffdf8",
+                fill: "#d95b1f",
+                stroke: "#fffaf2",
                 strokeWidth: 2,
               }}
               animationDuration={450}

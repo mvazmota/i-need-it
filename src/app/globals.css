@@ -6,20 +6,21 @@
   --font-display: "Instrument Serif", ui-serif, Georgia, Cambria, "Times New Roman",
     serif;
 
-  --color-paper: #f6f3ec;
-  --color-surface: #fffdf8;
-  --color-ink: #1a1712;
-  --color-ink-soft: #48433a;
-  --color-muted: #7c7467;
-  --color-line: #e7e0d3;
-  --color-line-strong: #d7cebc;
-  --color-accent: #e8590c;
-  --color-accent-dark: #c2410c;
-  --color-accent-soft: #fcebdd;
-  --color-good: #177a44;
-  --color-good-soft: #e4f4e9;
-  --color-bad: #b42318;
-  --color-bad-soft: #fbe9e7;
+  --color-paper: #f4e5d1;
+  --color-surface: #fffaf2;
+  --color-ink: #2a1a12;
+  --color-ink-soft: #57402f;
+  --color-muted: #7f6049;
+  --color-line: #e7d3bb;
+  --color-line-strong: #d6b998;
+  --color-accent: #e3652a;
+  --color-accent-dark: #b34313;
+  --color-accent-deep: #8f330c;
+  --color-accent-soft: #fde2ce;
+  --color-good: #3f7d49;
+  --color-good-soft: #e4f0dd;
+  --color-bad: #b23a2b;
+  --color-bad-soft: #fbe3da;
 }
 
 @layer base {
@@ -37,8 +38,9 @@
     color: var(--color-ink);
     font-family: var(--font-sans);
     background-image:
-      radial-gradient(70rem 32rem at 88% -12%, rgb(232 89 12 / 0.075), transparent 62%),
-      radial-gradient(55rem 30rem at -8% 0%, rgb(26 23 18 / 0.04), transparent 58%);
+      radial-gradient(85rem 42rem at 88% -16%, rgb(227 101 42 / 0.22), transparent 62%),
+      radial-gradient(65rem 36rem at -10% 4%, rgb(255 205 150 / 0.55), transparent 58%),
+      linear-gradient(180deg, #f7e8d3 0%, #f2dfc6 100%);
     background-attachment: fixed;
   }
 
@@ -92,8 +94,8 @@
     border: 1px solid var(--color-line);
     background-color: var(--color-surface);
     box-shadow:
-      0 1px 0 rgb(26 23 18 / 0.025),
-      0 24px 60px -46px rgb(26 23 18 / 0.55);
+      0 1px 0 rgb(74 42 24 / 0.035),
+      0 26px 60px -46px rgb(74 42 24 / 0.55);
   }
 
   .label {
@@ -160,7 +162,7 @@
     justify-content: center;
     gap: 0.5rem;
     border-radius: 999px;
-    background-color: var(--color-ink);
+    background-color: var(--color-accent-dark);
     padding-left: 1.25rem;
     padding-right: 1.25rem;
     font-size: 0.875rem;
@@ -172,7 +174,7 @@
   }
 
   .btn-primary:hover {
-    background-color: var(--color-ink-soft);
+    background-color: var(--color-accent-deep);
   }
 
   .btn-primary:active {
@@ -299,22 +301,22 @@
 }
 
 .product-canvas {
-  background-color: #f2eee5;
+  background-color: #f0ddc5;
   background-image:
-    radial-gradient(ellipse at 50% 38%, rgb(255 255 255 / 0.5), transparent 64%),
+    radial-gradient(ellipse at 50% 38%, rgb(255 250 242 / 0.55), transparent 64%),
     linear-gradient(
       45deg,
-      rgb(26 23 18 / 0.016) 25%,
+      rgb(74 42 24 / 0.022) 25%,
       transparent 25%,
       transparent 75%,
-      rgb(26 23 18 / 0.016) 75%
+      rgb(74 42 24 / 0.022) 75%
     ),
     linear-gradient(
       45deg,
-      rgb(26 23 18 / 0.016) 25%,
+      rgb(74 42 24 / 0.022) 25%,
       transparent 25%,
       transparent 75%,
-      rgb(26 23 18 / 0.016) 75%
+      rgb(74 42 24 / 0.022) 75%
     );
   background-position:
     0 0,
@@ -331,7 +333,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  box-shadow: inset 0 0 70px rgb(26 23 18 / 0.045);
+  box-shadow: inset 0 0 70px rgb(74 42 24 / 0.06);
 }
 
 @keyframes rise-in {
