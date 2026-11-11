@@ -54,6 +54,12 @@ function intervalLabel(hours: number): string {
   return `Every ${Math.round(hours / 24)} days`;
 }
 
+function pointSourceLabel(source: string): string {
+  if (source === "manual") return "Manual";
+  if (source === "hermes") return "Hermes";
+  return "Auto";
+}
+
 function DetailRow({
   label,
   children,
@@ -376,7 +382,7 @@ export default async function ItemPage({ params }: PageProps) {
                         {formatDate(point.createdAt)}
                       </span>
                       <span className="mt-0.5 flex items-center gap-1.5 text-[10px] text-muted sm:hidden">
-                        {point.source === "manual" ? "Manual" : "Auto"}
+                        {pointSourceLabel(point.source)}
                         {point.availability
                           ? ` · ${AVAILABILITY_LABELS[point.availability] ?? point.availability}`
                           : ""}
@@ -387,9 +393,10 @@ export default async function ItemPage({ params }: PageProps) {
                         className={cn(
                           "chip text-[9px]",
                           point.source === "manual" && "chip-accent",
+                          point.source === "hermes" && "chip-ink",
                         )}
                       >
-                        {point.source === "manual" ? "Manual" : "Auto"}
+                        {pointSourceLabel(point.source)}
                       </span>
                     </span>
                     <span className="hidden text-[11px] text-muted sm:block">

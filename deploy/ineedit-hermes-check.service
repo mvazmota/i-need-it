@@ -1,0 +1,23 @@
+[Unit]
+Description=ineedit price checks through Hermes
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=martin
+Group=martin
+WorkingDirectory=/home/martin/projects/ineedit
+EnvironmentFile=/home/martin/projects/ineedit/.env
+Environment=HOME=/home/martin
+Environment=HERMES_HOME=/home/martin/.hermes
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Environment=PYTHONUNBUFFERED=1
+Environment=PATH=/home/martin/.hermes/hermes-agent/node_modules/.bin:/home/martin/.hermes/tools/node-26.12.1-linux-arm64/bin:/home/martin/.hermes/tools/npm-12.0.2-linux-arm64/bin:/home/martin/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/usr/bin/python3 /home/martin/projects/ineedit/scripts/hermes-check.py
+TimeoutStartSec=90min
+Nice=5
+
+[Install]
+WantedBy=multi-user.target

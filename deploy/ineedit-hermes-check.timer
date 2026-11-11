@@ -1,0 +1,14 @@
+[Unit]
+Description=Run ineedit Hermes price checks every 15 minutes
+Requires=ineedit-hermes-check.service
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=15min
+AccuracySec=30s
+RandomizedDelaySec=20s
+Persistent=true
+Unit=ineedit-hermes-check.service
+
+[Install]
+WantedBy=timers.target

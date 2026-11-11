@@ -24,6 +24,9 @@ services:
       start_period: 30s
 
   worker:
+    # Scheduled checks normally run through Hermes on the host. Use this
+    # container only as a fallback: docker compose --profile builtin-worker up -d
+    profiles: ["builtin-worker"]
     image: ineedit:latest
     restart: unless-stopped
     init: true

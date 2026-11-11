@@ -17,6 +17,7 @@ Next.js process, one worker process, and a single SQLite file.
 - Set a target price and see how far away it is.
 - Flag deals: target hit or lowest price ever recorded.
 - Check prices on a per-item interval (1 hour to 1 week).
+- Delegate scheduled checks to the Hermes agent already running on the Pi.
 - Record prices manually when a shop blocks bots.
 - Optional push notifications through [ntfy](https://ntfy.sh).
 - Optional single-user username/password login.
@@ -93,45 +94,86 @@ javascript:(()=>{location.href='http://YOUR-PI:3000/items/new?url='+encodeURICom
 | `AUTH_SECRET` | empty | Signs the session cookie. Changing it logs everyone out. |
 | `COOKIE_SECURE` | `false` | Set `true` when the app is served over HTTPS. |
 | `DEFAULT_CURRENCY` | `EUR` | Used when a shop does not expose a currency. |
-| `SCRAPER_USER_AGENT` | Chrome UA | User agent used for page requests. |
-| `SCRAPER_TIMEOUT_MS` | `15000` | Page fetch timeout. |
-| `CHECK_CRON` | `*/15 * * * *` | How often the worker looks for due items. This is not the per-item interval. |
-| `CHECK_ON_START` | `true` | Run a due-item pass when the worker starts. |
-| `TZ` | system | IANA timezone for the worker, e.g. `Europe/Lisbon`. |
+| `WORKER_TOKEN` | empty | Shared secret for the Hermes checker. Required for `/api/hermes/*`. |
+| `APP_URL` | `http://127.0.0.1:3000` | App URL used by the host-side Hermes checker. |
+| `HERMES_BIN` | `~/.hermes/.../hermes` | Hermes CLI path on the Pi. |
+| `HERMES_HOME` | `/home/martin/.hermes` | Hermes home used by the checker. |
+| `HERMES_TOOLSETS` | `web,browser` | Tools Hermes may use during a price check. |
+| `HERMES_CHECK_TIMEOUT` | `240` | Per-item Hermes timeout in seconds. |
+| `SCRAPER_USER_AGENT` | Chrome UA | User agent used by the built-in scraper. |
+| `SCRAPER_TIMEOUT_MS` | `15000` | Built-in scraper fetch timeout. |
+| `CHECK_CRON` | `*/15 * * * *` | Built-in worker schedule (fallback only). |
+| `CHECK_ON_START` | `true` | Run a due-item pass when the built-in worker starts. |
+| `TZ` | system | IANA timezone, e.g. `Europe/Lisbon`. |
 | `NTFY_URL` | `https://ntfy.sh` | ntfy server base URL. |
 | `NTFY_TOPIC` | empty | Enables notifications when set. |
 | `NTFY_TOKEN` | empty | Optional bearer token for a protected ntfy server. |
 
-## Checking prices / cron
+## Price checks with Hermes
 
-`npm run worker` is a long-running process. Every `CHECK_CRON` tick it finds
-items whose own interval is due and checks them with concurrency 2 and a small
-random delay. Each item stores its own interval, so a 24-hour item is checked
-once a day even if the scheduler ticks every 15 minutes.
+On the Pi, scheduled checks are delegated to the Hermes agent that is already
+running there. A systemd timer runs `scripts/hermes-check.py` every 15 minutes.
+The script:
 
-**Choose one scheduler, not both:**
+1. asks the app for items whose own interval is due;
+2. runs Hermes with `web,browser` tools and a strict JSON prompt;
+3. posts the price (or failure) back to a token-protected app endpoint.
 
-### Option A: worker process (recommended)
+Each price history row records `Hermes` as its source. Per-item intervals still
+apply: a 24-hour item is only sent to Hermes once a day. Checks are sequential
+because browser work is expensive; expect roughly 15–60 seconds per item.
+
+Hermes needs its `web` and `browser` toolsets enabled, which they are by default.
+The systemd unit uses the CLI at `HERMES_BIN` and the existing
+`/home/martin/.hermes` home.
+
+### Set up the Hermes checker
+
+1. Generate a shared secret and put it in `.env` (the app and the checker read
+   the same file):
+
+   ```bash
+   openssl rand -hex 32
+   # WORKER_TOKEN=<the output>
+   ```
+
+2. Install and enable the timer on the Pi:
+
+   ```bash
+   sudo cp deploy/ineedit-hermes-check.service /etc/systemd/system/
+   sudo cp deploy/ineedit-hermes-check.timer /etc/systemd/system/
+   sudo systemctl daemon-reload
+   sudo systemctl enable --now ineedit-hermes-check.timer
+   ```
+
+3. Test one full pass immediately:
+
+   ```bash
+   python3 scripts/hermes-check.py --all
+   journalctl -u ineedit-hermes-check -n 50 --no-pager
+   ```
+
+   `--all` ignores due times and checks every watching item. Without it, only
+   due items are checked.
+
+Manual “Check price” buttons in the app still use the built-in scraper as a
+quick fallback. The scheduled path is Hermes.
+
+### Built-in worker (optional fallback)
+
+If Hermes is unavailable, the original scraper worker still works:
 
 ```bash
 npm run worker
+# or on the Pi, explicitly enable the compose profile:
+docker compose --profile builtin-worker up -d
 ```
 
-Docker Compose already runs this as the `worker` service. On bare metal use
-`deploy/ineedit-worker.service`.
+On bare metal use `deploy/ineedit-worker.service` or `deploy/ineedit-check.cron`.
+**Do not run the built-in worker and the Hermes timer at the same time**, or
+each due item will be checked twice.
 
-### Option B: system cron
-
-Run a one-shot check from cron instead of keeping the worker alive:
-
-```cron
-*/15 * * * * pi cd /home/martin/ineedit && /usr/bin/npm run check >> /home/martin/ineedit/check.log 2>&1
-```
-
-A copy is in `deploy/ineedit-check.cron`. If you use this, do **not** run the
-worker service, or every due item will be checked twice.
-
-One-off commands:
+One-off scraper commands:
 
 ```bash
 npm run check           # check only items that are due
@@ -153,8 +195,8 @@ Prerequisites: 64-bit Raspberry Pi OS and Docker with Compose.
    nano .env
    ```
 
-   Set at least `APP_USERNAME`, `APP_PASSWORD`, `AUTH_SECRET`, `TZ`, and
-   `DEFAULT_CURRENCY`.
+   Set at least `APP_USERNAME`, `APP_PASSWORD`, `AUTH_SECRET`, `WORKER_TOKEN`,
+   `TZ`, and `DEFAULT_CURRENCY`.
    Set `COOKIE_SECURE=true` once HTTPS is in front of the app.
 
 3. Build and start:
@@ -174,7 +216,7 @@ Prerequisites: 64-bit Raspberry Pi OS and Docker with Compose.
 
    ```bash
    docker compose logs -f web
-   docker compose logs -f worker
+   journalctl -u ineedit-hermes-check -f
    ```
 
 6. Put it behind Caddy, nginx, or Tailscale. An example Caddy block is in
@@ -280,9 +322,10 @@ src/lib/scrape.ts        page fetcher and price extractor
 src/lib/parse-price.ts   price/currency parsing
 src/lib/queries.ts       dashboard and detail queries
 src/lib/stats.ts         price/delta/deal calculations
-src/worker/              scheduler, batch runner, single check
+src/worker/              built-in scraper worker and price recording
+scripts/hermes-check.py  host-side Hermes price checker
 drizzle/                 generated SQL migrations
-deploy/                  systemd, cron, Caddy examples
+deploy/                  systemd, Hermes timer, cron, Caddy examples
 compose.yaml             RPi Docker deployment
 ```
 
@@ -293,9 +336,11 @@ compose.yaml             RPi Docker deployment
 | `npm run dev` | Next.js dev server |
 | `npm run build` | Production build |
 | `npm start` | Production server |
-| `npm run worker` | Long-running price scheduler |
-| `npm run check` | One-shot due-item check |
-| `npm run check -- --all` | Force-check every watching item |
+| `npm run worker` | Long-running built-in scraper (fallback) |
+| `npm run check` | One-shot built-in check of due items |
+| `npm run check -- --all` | Force-check every watching item with the scraper |
+| `python3 scripts/hermes-check.py` | Check due items through Hermes |
+| `python3 scripts/hermes-check.py --all` | Check every watching item through Hermes |
 | `npm run db:generate` | Generate a migration after schema changes |
 | `npm run db:studio` | Open Drizzle Studio |
 | `npm run typecheck` | TypeScript check |
@@ -304,6 +349,8 @@ compose.yaml             RPi Docker deployment
 
 - Set `APP_USERNAME` and `APP_PASSWORD` before exposing the app beyond your machine. The login
   cookie is signed with `AUTH_SECRET` and is HTTP-only.
+- `WORKER_TOKEN` protects the `/api/hermes/*` endpoints, which intentionally
+  bypass the login cookie. Keep it secret and long.
 - Use HTTPS and `COOKIE_SECURE=true` when the app leaves the LAN.
 - The scraper refuses localhost/private-network URLs and follows redirects with
   the same check, but this is a personal tool, not a hardened multi-tenant

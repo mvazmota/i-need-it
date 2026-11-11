@@ -169,7 +169,7 @@ export function normalizeAvailability(
   raw: string | null | undefined,
 ): string | null {
   if (!raw) return null;
-  const value = raw.toLowerCase();
+  const value = raw.toLowerCase().replace(/[\s-]+/g, "_");
   if (value.includes("instock") || value.includes("in_stock")) return "in_stock";
   if (value.includes("outofstock") || value.includes("out_of_stock")) {
     return "out_of_stock";

@@ -50,7 +50,7 @@ export const pricePoints = sqliteTable(
     priceCents: integer("price_cents").notNull(),
     currency: text("currency").notNull(),
     availability: text("availability"),
-    source: text("source", { enum: ["auto", "manual"] })
+    source: text("source", { enum: ["auto", "manual", "hermes"] })
       .notNull()
       .default("auto"),
     createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
