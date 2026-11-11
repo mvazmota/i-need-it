@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   ArrowRight,
@@ -11,7 +10,6 @@ import {
 } from "lucide-react";
 
 export function LoginForm({ usernameRequired }: { usernameRequired: boolean }) {
-  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -41,8 +39,9 @@ export function LoginForm({ usernameRequired }: { usernameRequired: boolean }) {
         return;
       }
 
-      router.replace("/");
-      router.refresh();
+      // A full navigation is intentional: it guarantees the fresh session
+      // cookie is sent through the proxy before the dashboard loads.
+      window.location.assign("/");
     } catch {
       setError("Could not reach the app. Check your connection.");
     } finally {
