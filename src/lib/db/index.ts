@@ -42,8 +42,24 @@ function createDatabase(): DbGlobal {
   return { db, sqlite };
 }
 
-const created = globalForDb.__ineeditDb ?? createDatabase();
-globalForDb.__ineeditDb = created;
+let cached = globalForDb.__ineeditDb;
 
-export const db: AppDatabase = created.db;
+function getDatabase(): AppDatabase {
+  if (!cached) {
+    cached = createDatabase();
+    globalForDb.__ineeditDb = cached;
+  }
+  return cached.db;
+}
+
+// Lazy proxy: importing this module must not open SQLite or run migrations.
+// Next evaluates route modules while collecting page data during `next build`,
+// which previously caused concurrent migrations in the build workers.
+export const db: AppDatabase = new Proxy({} as AppDatabase, {
+  get(_target, property) {
+    const instance = getDatabase();
+    const value = Reflect.get(instance, property, instance);
+    return typeof value === "function" ? value.bind(instance) : value;
+  },
+});
 export { schema };
