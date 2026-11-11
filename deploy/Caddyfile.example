@@ -1,0 +1,11 @@
+# Example Caddy site block for HTTPS in front of the Docker stack.
+# 1. Point ineedit.example.com at the Pi.
+# 2. Copy this into /etc/caddy/Caddyfile and replace the hostname.
+# 3. Set COOKIE_SECURE=true in .env and run: docker compose up -d
+#
+# Caddy obtains and renews the certificate automatically.
+
+ineedit.example.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000
+}

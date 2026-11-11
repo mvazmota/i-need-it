@@ -1,0 +1,12 @@
+node_modules
+.next
+data
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+*.log
+.tmp-*
+README.md
+deploy

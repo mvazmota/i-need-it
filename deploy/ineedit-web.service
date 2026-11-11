@@ -1,0 +1,17 @@
+[Unit]
+Description=ineedit web
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=martin
+WorkingDirectory=/home/martin/ineedit
+EnvironmentFile=/home/martin/ineedit/.env
+ExecStart=/usr/bin/npm run start
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

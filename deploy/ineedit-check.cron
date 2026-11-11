@@ -1,0 +1,6 @@
+# Alternative to ineedit-worker.service, for people who prefer system cron.
+# Install as /etc/cron.d/ineedit-check and do NOT run the worker service at the
+# same time, otherwise every due item gets checked twice.
+SHELL=/bin/sh
+PATH=/usr/local/bin:/usr/bin:/bin
+*/15 * * * * martin cd /home/martin/ineedit && /usr/bin/npm run check >> /home/martin/ineedit/check.log 2>&1
