@@ -8,7 +8,8 @@ target price or a new all-time low, you get a badge in the app and an optional
 push notification.
 
 Built to run on a Raspberry Pi 5 next to the services you already have: one
-Next.js process, one worker process, and a single SQLite file.
+Next.js process, a SQLite file, and your existing Hermes agent for scheduled
+price checks.
 
 ## What it does
 
@@ -121,7 +122,9 @@ The script:
 
 Each price history row records `Hermes` as its source. Per-item intervals still
 apply: a 24-hour item is only sent to Hermes once a day. Checks are sequential
-because browser work is expensive; expect roughly 15–60 seconds per item.
+because browser work is expensive; expect roughly 15–60 seconds per item. Each
+check is a full agent turn and therefore uses model/tool tokens, so keep the
+per-item intervals sensible.
 
 Hermes needs its `web` and `browser` toolsets enabled, which they are by default.
 The systemd unit uses the CLI at `HERMES_BIN` and the existing
@@ -238,10 +241,12 @@ docker compose up -d --build
 npm ci
 npm run build
 sudo cp deploy/ineedit-web.service /etc/systemd/system/
-sudo cp deploy/ineedit-worker.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable --now ineedit-web ineedit-worker
+sudo systemctl enable --now ineedit-web
 ```
+
+For scheduled checks, install the Hermes timer described above. If you are not
+using Hermes, install `deploy/ineedit-worker.service` instead and enable it.
 
 Adjust `User`, `WorkingDirectory`, and the `npm` path in the unit files if your
 user or install location differs. If `better-sqlite3` has no prebuilt binary for

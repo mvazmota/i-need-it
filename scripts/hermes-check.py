@@ -206,7 +206,7 @@ def run_hermes(item: dict) -> dict:
             text=True,
             timeout=HERMES_TIMEOUT,
             env=env,
-            cwd=str(BASE_DIR),
+            cwd=str(Path.home()),
         )
     except subprocess.TimeoutExpired:
         return {"error": f"Hermes timed out after {HERMES_TIMEOUT}s."}
